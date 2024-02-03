@@ -170,4 +170,4 @@ if __name__=="__main__":
     plt.ylabel('Loss/Accuracy')
     plt.title('Interpolated Weights (Learning Rate)')
     plt.legend()
-    figure.savefig('3-flatness_p1.png')
+    figure.savefig('./figs/3-flatness_p1.png')

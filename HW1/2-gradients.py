@@ -81,5 +81,5 @@ if __name__ == "__main__":
     plt.xlabel('Iterations')
     plt.ylabel('Gradients')
     plt.show()
-    figure.savefig('2-func_gradients.png')
+    figure.savefig('./figs/2-func_gradients.png')
 

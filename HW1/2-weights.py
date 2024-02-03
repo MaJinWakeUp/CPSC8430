@@ -159,7 +159,7 @@ if __name__=="__main__":
     plt.title('Loss with respect to model weights')
 
     plt.show()
-    fig.savefig('2-weights.png')
+    fig.savefig('./figs/2-weights.png')
 
 
 

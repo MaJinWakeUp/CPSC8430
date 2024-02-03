@@ -128,5 +128,5 @@ if __name__=="__main__":
     plt.legend()
     plt.title('Accuracy')
     plt.show()
-    figure.savefig('3-generalization.png')
+    figure.savefig('./figs/3-generalization.png')
     

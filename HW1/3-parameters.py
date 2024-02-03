@@ -140,5 +140,5 @@ if __name__=="__main__":
     plt.ylabel('Accuracy')
     plt.legend()
     plt.title('Accuracy')
-    figure.savefig('3-parameters_vs_generalization.png')
+    figure.savefig('./figs/3-parameters_vs_generalization.png')
     

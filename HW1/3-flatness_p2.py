@@ -154,4 +154,4 @@ if __name__=="__main__":
     plt.xlabel('Batch Size')
     plt.ylabel('Accuracy')
     plt.legend()
-    figure.savefig('3-flatness_p2.png')
+    figure.savefig('./figs/3-flatness_p2.png')

@@ -107,5 +107,5 @@ if __name__ == "__main__":
     plt.legend()
     plt.title('Minimal Ratio vs Loss')
     plt.show() 
-    figure.savefig('2-minimal_ratio_vs_loss.png')
+    figure.savefig('./figs/2-minimal_ratio_vs_loss.png')
 

@@ -115,6 +115,6 @@ if __name__ == "__main__":
     plt.xlabel('x')
     plt.ylabel('y')
     # plt.show()
-    fig2.savefig('1-func_prediction.png')
+    fig2.savefig('./figs/1-func_prediction.png')
     plt.close()
 

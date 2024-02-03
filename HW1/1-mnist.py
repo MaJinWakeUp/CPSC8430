@@ -184,5 +184,5 @@ if __name__=="__main__":
     plt.ylabel('Accuracy')
     plt.title('Training and Test Accuracy Curves')
     plt.legend()
-    figure2.savefig('1-mnist_accuracy.png')
+    figure2.savefig('./figs/1-mnist_accuracy.png')
     plt.close()
