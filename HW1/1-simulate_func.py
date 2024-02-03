@@ -35,6 +35,18 @@ class DNN2(nn.Module):
     def forward(self, x):
         return self.main(x)
 
+class DNN3(nn.Module):
+    def __init__(self):
+        super(DNN3, self).__init__()
+        self.main = nn.Sequential(
+            nn.Linear(1, 154),
+            nn.ReLU(),
+            nn.Linear(154, 1),
+        )
+
+    def forward(self, x):
+        return self.main(x)
+
 
 def train_model(model, train_loader, optimizer, criterion, epochs=1000):
     model.train()
@@ -58,9 +70,10 @@ if __name__ == "__main__":
     # Create the model
     model1 = DNN1()
     model2 = DNN2()
+    model3 = DNN3()
 
     # print the number of parameters in the model
-    print(f'Number of parameters: DNN1={sum(p.numel() for p in model1.parameters())}, DNN2={sum(p.numel() for p in model2.parameters())}')
+    print(f'Number of parameters: DNN1={sum(p.numel() for p in model1.parameters())}, DNN2={sum(p.numel() for p in model2.parameters())}, DNN3={sum(p.numel() for p in DNN3().parameters())}')
 
     # Create the data
     x = torch.linspace(-10, 10, 10000).reshape(-1, 1)
@@ -71,22 +84,25 @@ if __name__ == "__main__":
     lr = 1e-3
     optimizer1 = optim.Adam(model1.parameters(), lr=lr)
     optimizer2 = optim.Adam(model2.parameters(), lr=lr)
+    optimizer3 = optim.Adam(model3.parameters(), lr=lr)
     criterion = nn.MSELoss()
     epochs = 1000
 
     # Train the model
     losses1 = train_model(model1, train_loader, optimizer1, criterion, epochs)
     losses2 = train_model(model2, train_loader, optimizer2, criterion, epochs)
+    losses3 = train_model(model3, train_loader, optimizer3, criterion, epochs)
 
     # Plot the loss
     fig1 = plt.figure(figsize=(10, 5))
     plt.plot(losses1, label='DNN1', color='cyan')
     plt.plot(losses2, label='DNN2', color='orange')
+    plt.plot(losses3, label='DNN3', color='green')
     plt.legend()
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     # plt.show()
-    fig1.savefig('func_loss.png')
+    fig1.savefig('1-func_loss.png')
     plt.close()
 
     # Plot the prediction
@@ -94,10 +110,11 @@ if __name__ == "__main__":
     plt.plot(x, y, label='GT', color='blue')
     plt.plot(x, model1(x).detach().numpy(), label='DNN1', color='cyan')
     plt.plot(x, model2(x).detach().numpy(), label='DNN2', color='orange')
+    plt.plot(x, model3(x).detach().numpy(), label='DNN3', color='green')
     plt.legend()
     plt.xlabel('x')
     plt.ylabel('y')
     # plt.show()
-    fig2.savefig('func_prediction.png')
+    fig2.savefig('1-func_prediction.png')
     plt.close()
 
