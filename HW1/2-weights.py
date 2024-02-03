@@ -44,8 +44,8 @@ def train_epoch(model, train_loader, optimizer, criterion, eval, epoch):
 
         loss.backward()
         optimizer.step()
-        losses.append(loss.item().cpu())
-        accuracies.append(acc.item().cpu())
+        losses.append(loss.item())
+        accuracies.append(acc.item())
         progress_bar.set_description(f'Epoch: {epoch+1} training. Loss: {loss.item():.5f}, Accuracy: {acc.item():.5f}')
     loss = sum(losses) / len(losses)
     acc = sum(accuracies) / len(accuracies)
@@ -64,8 +64,8 @@ def test_epoch(model, test_loader, criterion, eval, epoch):
             loss = criterion(y_hat, y)
             acc = eval(y_hat, y)
 
-            losses.append(loss.item().cpu())
-            accuracies.append(acc.item().cpu())
+            losses.append(loss.item())
+            accuracies.append(acc.item())
             progress_bar.set_description(f'Epoch: {epoch+1} testing. Loss: {loss.item():.5f}, Accuracy: {acc.item():.5f}')
     loss = sum(losses) / len(losses)
     acc = sum(accuracies) / len(accuracies)
