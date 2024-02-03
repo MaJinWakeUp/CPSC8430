@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Create the data
     x = torch.linspace(-10, 10, 10000).reshape(-1, 1)
-    y = torch.sin(x) + torch.cos(2*x)
+    y = torch.sin(2 * torch.pi * x) / (2 * torch.pi * x)
 
     # parameters
     train_loader = torch.utils.data.DataLoader(list(zip(x, y)), batch_size=2000, shuffle=True)

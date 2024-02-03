@@ -84,7 +84,9 @@ def train_model(model, train_loader, test_loader, optimizer, criterion, eval, ep
         if vis and epoch % vis_interval == 0:
             # if vis, only collect weights, loss, accuracy every k epochs
             layer_weights.append(model.fc1.weight.view(-1).cpu().detach().numpy())
+            # print(layer_weights[-1].shape)
             model_weights.append(torch.cat([p.view(-1) for p in model.parameters()]).cpu().detach().numpy())
+            # print(model_weights[-1].shape)
             train_losses.append(train_loss)
             train_accuracies.append(train_acc)
             test_losses.append(test_loss)
@@ -111,7 +113,7 @@ if __name__=="__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     accuracy = lambda y_hat, y: (y_hat.argmax(dim=1) == y).float().mean()
-    epochs = 200
+    epochs = 100
     vis = True
     vis_interval = 5
 
@@ -124,30 +126,40 @@ if __name__=="__main__":
     for i in range(repeat):
         train_losses, train_accuracies, test_losses, test_accuracies, layer_weights, model_weights = train_model(model, trainloader, testloader, optimizer, criterion, accuracy, epochs, vis, vis_interval)
         # Convert weights to two-dimensional points using PCA
-        layer_weights_pca = PCA(n_components=2).fit_transform(layer_weights)
-        model_weights_pca = PCA(n_components=2).fit_transform(model_weights)
+        layer_weights_pca = PCA(n_components=2).fit_transform(np.array(layer_weights))
+        model_weights_pca = PCA(n_components=2).fit_transform(np.array(model_weights))
         all_train_losses.append(train_losses)
         all_train_accuracies.append(train_accuracies)
         all_layer_weights.append(layer_weights_pca)
         all_model_weights.append(model_weights_pca)
     
-    # Visualize loss value and accuracy with respect to the weights
-    figure = plt.figure(figsize=(10, 5))
-    plt.subplot(1, 2, 1)
+    # save values first before plotting
+    np.save('2-all_train_losses.npy', all_train_losses)
+    np.save('2-all_train_accuracies.npy', all_train_accuracies)
+    np.save('2-all_layer_weights.npy', all_layer_weights)
+    np.save('2-all_model_weights.npy', all_model_weights)
+    # Visualize loss value with respect to the weights in 3D, while weights are x and y, and loss is z
+    fig = plt.figure()
+    ax = fig.add_subplot(121, projection='3d')
     for i in range(repeat):
-        plt.scatter(all_layer_weights[i][:, 0], all_layer_weights[i][:, 1], c=all_train_losses[i], cmap='viridis')
-    plt.colorbar(label='Loss Value')
-    plt.xlabel('PCA Component 1')
-    plt.ylabel('PCA Component 2')
-    plt.title('Loss Value vs Layer Weights')
+        ax.plot(all_layer_weights[i][:, 0], all_layer_weights[i][:, 1], all_train_losses[i], label=f'Run {i+1}')
+    ax.set_xlabel('PCA1')
+    ax.set_ylabel('PCA2')
+    ax.set_zlabel('Loss')
+    plt.legend()
+    plt.title('Loss with respect to layer weights')
 
-    plt.subplot(1, 2, 2)
+    ax = fig.add_subplot(122, projection='3d')
     for i in range(repeat):
-        plt.scatter(all_model_weights[i][:, 0], all_model_weights[i][:, 1], c=all_train_accuracies[i], cmap='viridis')
-    plt.colorbar(label='Accuracy Value')
-    plt.xlabel('PCA Component 1')
-    plt.ylabel('PCA Component 2')
-    plt.title('Accuracy vs Model Weights')
-    plt.tight_layout()
-    figure.savefig('2-mnist_weights.png')
+        ax.plot(all_model_weights[i][:, 0], all_model_weights[i][:, 1], all_train_losses[i], label=f'Run {i+1}')
+    ax.set_xlabel('PCA1')
+    ax.set_ylabel('PCA2')
+    ax.set_zlabel('Loss')
+    plt.legend()
+    plt.title('Loss with respect to model weights')
+
+    plt.show()
+    fig.savefig('2-weights.png')
+
+
 
