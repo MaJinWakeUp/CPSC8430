@@ -117,7 +117,7 @@ if __name__=="__main__":
 
     # Create a new model with interpolated weights
     # alpha from 0 to 1
-    alphas = [i/100 for i in range(101)]
+    alphas = [i/50 for i in range(51)]
     new_train_losses_bs = []
     new_train_accuracies_bs = []
     new_test_losses_bs = []
@@ -152,22 +152,29 @@ if __name__=="__main__":
     
     # Plot the results
     figure = plt.figure(figsize=(10, 5))
-    plt.subplot(1, 2, 1)
-    plt.plot(alphas, new_train_losses_bs, label='Train Loss', color='cyan')
-    plt.plot(alphas, new_test_losses_bs, label='Test Loss', color='cyan', linestyle='--')
-    plt.plot(alphas, new_train_accuracies_bs, label='Train Accuracy', color='orange')
-    plt.plot(alphas, new_test_accuracies_bs, label='Test Accuracy', color='orange', linestyle='--')
-    plt.xlabel('Alpha')
-    plt.ylabel('Loss/Accuracy')
-    plt.title('Interpolated Weights (Batch Size)')
-    plt.legend()
-    plt.subplot(1, 2, 2)
-    plt.plot(alphas, new_train_losses_lr, label='Train Loss', color='cyan')
-    plt.plot(alphas, new_test_losses_lr, label='Test Loss', color='cyan', linestyle='--')
-    plt.plot(alphas, new_train_accuracies_lr, label='Train Accuracy', color='orange')
-    plt.plot(alphas, new_test_accuracies_lr, label='Test Accuracy', color='orange', linestyle='--')
-    plt.xlabel('Alpha')
-    plt.ylabel('Loss/Accuracy')
-    plt.title('Interpolated Weights (Learning Rate)')
-    plt.legend()
+    ax1 = figure.add_subplot(1, 2, 1)
+    ax1.plot(alphas, new_train_losses_bs, label='Train Loss', color='cyan')
+    ax1.plot(alphas, new_test_losses_bs, label='Test Loss', color='cyan', linestyle='--')
+    ax1.set_xlabel('Alpha')
+    ax1.set_ylabel('Loss')
+    ax1.set_title('Interpolated Weights (Batch Size)')
+    ax1.legend()
+    ax2 = ax1.twinx()
+    ax2.plot(alphas, new_train_accuracies_bs, label='Train Accuracy', color='orange')
+    ax2.plot(alphas, new_test_accuracies_bs, label='Test Accuracy', color='orange', linestyle='--')
+    ax2.set_ylabel('Accuracy')
+    
+
+    ax3 = figure.add_subplot(1, 2, 2)
+    ax3.plot(alphas, new_train_losses_lr, label='Train Loss', color='cyan')
+    ax3.plot(alphas, new_test_losses_lr, label='Test Loss', color='cyan', linestyle='--')
+    ax3.set_xlabel('Alpha')
+    ax3.set_ylabel('Loss')
+    ax3.set_title('Interpolated Weights (Learning Rate)')
+    ax3.legend()
+    ax4 = ax3.twinx()
+    ax4.plot(alphas, new_train_accuracies_lr, label='Train Accuracy', color='orange')
+    ax4.plot(alphas, new_test_accuracies_lr, label='Test Accuracy', color='orange', linestyle='--')
+    ax4.set_ylabel('Accuracy')
+
     figure.savefig('./figs/3-flatness_p1.png')
