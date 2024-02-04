@@ -100,10 +100,6 @@ if __name__=="__main__":
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
     trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
     testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-    # Randomly change training and testing labels
-    trainset.targets = torch.tensor([random.randint(0, 9) for _ in range(len(trainset.targets))])
-    testset.targets = torch.tensor([random.randint(0, 9) for _ in range(len(testset.targets))])
-
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True)
     testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 

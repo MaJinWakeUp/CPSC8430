@@ -81,16 +81,15 @@ def train_model(model, train_loader, test_loader, optimizer, criterion, eval, ep
     for epoch in range(epochs):
         train_loss, train_acc = train_epoch(model, train_loader, optimizer, criterion, eval, epoch)
         test_loss, test_acc = test_epoch(model, test_loader, criterion, eval, epoch)
-        if vis and epoch % vis_interval == 0:
-            # if vis, only collect weights, loss, accuracy every k epochs
-            layer_weights.append(model.fc1.weight.view(-1).cpu().detach().numpy())
-            # print(layer_weights[-1].shape)
-            model_weights.append(torch.cat([p.view(-1) for p in model.parameters()]).cpu().detach().numpy())
-            # print(model_weights[-1].shape)
-            train_losses.append(train_loss)
-            train_accuracies.append(train_acc)
-            test_losses.append(test_loss)
-            test_accuracies.append(test_acc)
+        if vis:
+            if epoch % vis_interval == 0:
+                # if vis, only collect weights, loss, accuracy every k epochs
+                layer_weights.append(model.fc1.weight.view(-1).cpu().detach().numpy())
+                model_weights.append(torch.cat([p.view(-1) for p in model.parameters()]).cpu().detach().numpy())
+                train_losses.append(train_loss)
+                train_accuracies.append(train_acc)
+                test_losses.append(test_loss)
+                test_accuracies.append(test_acc)
         else:
             train_losses.append(train_loss)
             train_accuracies.append(train_acc)
@@ -119,6 +118,7 @@ if __name__=="__main__":
     all_model_weights = []
     # Train the model
     repeat = 8
+
     for i in range(repeat):
         model = DNN().to(device)
         optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -130,17 +130,27 @@ if __name__=="__main__":
         all_train_accuracies.append(train_accuracies)
         all_layer_weights.append(layer_weights_pca)
         all_model_weights.append(model_weights_pca)
-    
+
+    """
     # save values first before plotting
     np.save('2-all_train_losses.npy', all_train_losses)
     np.save('2-all_train_accuracies.npy', all_train_accuracies)
     np.save('2-all_layer_weights.npy', all_layer_weights)
     np.save('2-all_model_weights.npy', all_model_weights)
+    
+
+    # load values 
+    all_train_losses = np.load('2-all_train_losses.npy')
+    all_train_accuracies = np.load('2-all_train_accuracies.npy')
+    all_layer_weights = np.load('2-all_layer_weights.npy')
+    all_model_weights = np.load('2-all_model_weights.npy')
+    """
+
     # Visualize loss value with respect to the weights in 3D, while weights are x and y, and loss is z
     fig = plt.figure()
     ax = fig.add_subplot(121, projection='3d')
     for i in range(repeat):
-        ax.plot(all_layer_weights[i][:, 0], all_layer_weights[i][:, 1], all_train_losses[i])
+        ax.scatter(all_layer_weights[i][:, 0], all_layer_weights[i][:, 1], all_train_losses[i])
     ax.set_xlabel('PCA1')
     ax.set_ylabel('PCA2')
     ax.set_zlabel('Loss')
@@ -149,7 +159,7 @@ if __name__=="__main__":
 
     ax = fig.add_subplot(122, projection='3d')
     for i in range(repeat):
-        ax.plot(all_model_weights[i][:, 0], all_model_weights[i][:, 1], all_train_losses[i])
+        ax.scatter(all_model_weights[i][:, 0], all_model_weights[i][:, 1], all_train_losses[i])
     ax.set_xlabel('PCA1')
     ax.set_ylabel('PCA2')
     ax.set_zlabel('Loss')
