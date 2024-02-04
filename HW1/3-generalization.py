@@ -117,12 +117,12 @@ if __name__=="__main__":
 
     # Plot the training and test loss curves
     figure = plt.figure(figsize=(10, 5))
-    plt.add_subplot(1, 2, 1)
+    plt.subplot(1, 2, 1)
     plt.plot(train_losses, label='Training Loss')
     plt.plot(test_losses, label='Test Loss')
     plt.legend()
     plt.title('Loss')
-    plt.add_subplot(1, 2, 2)
+    plt.subplot(1, 2, 2)
     plt.plot(train_accuracies, label='Training Accuracy')
     plt.plot(test_accuracies, label='Test Accuracy')
     plt.legend()

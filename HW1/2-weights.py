@@ -106,12 +106,8 @@ if __name__=="__main__":
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True)
     testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
 
-    # Create models
-    model = DNN().to(device)
-
     # Define the loss function and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
     accuracy = lambda y_hat, y: (y_hat.argmax(dim=1) == y).float().mean()
     epochs = 100
     vis = True
@@ -124,6 +120,8 @@ if __name__=="__main__":
     # Train the model
     repeat = 8
     for i in range(repeat):
+        model = DNN().to(device)
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
         train_losses, train_accuracies, test_losses, test_accuracies, layer_weights, model_weights = train_model(model, trainloader, testloader, optimizer, criterion, accuracy, epochs, vis, vis_interval)
         # Convert weights to two-dimensional points using PCA
         layer_weights_pca = PCA(n_components=2).fit_transform(np.array(layer_weights))
@@ -142,7 +140,7 @@ if __name__=="__main__":
     fig = plt.figure()
     ax = fig.add_subplot(121, projection='3d')
     for i in range(repeat):
-        ax.plot(all_layer_weights[i][:, 0], all_layer_weights[i][:, 1], all_train_losses[i], label=f'Run {i+1}')
+        ax.plot(all_layer_weights[i][:, 0], all_layer_weights[i][:, 1], all_train_losses[i])
     ax.set_xlabel('PCA1')
     ax.set_ylabel('PCA2')
     ax.set_zlabel('Loss')
@@ -151,7 +149,7 @@ if __name__=="__main__":
 
     ax = fig.add_subplot(122, projection='3d')
     for i in range(repeat):
-        ax.plot(all_model_weights[i][:, 0], all_model_weights[i][:, 1], all_train_losses[i], label=f'Run {i+1}')
+        ax.plot(all_model_weights[i][:, 0], all_model_weights[i][:, 1], all_train_losses[i])
     ax.set_xlabel('PCA1')
     ax.set_ylabel('PCA2')
     ax.set_zlabel('Loss')

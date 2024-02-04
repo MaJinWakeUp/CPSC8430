@@ -152,7 +152,7 @@ if __name__=="__main__":
     
     # Plot the results
     figure = plt.figure(figsize=(10, 5))
-    plt.add_subplot(1, 2, 1)
+    plt.subplot(1, 2, 1)
     plt.plot(alphas, new_train_losses_bs, label='Train Loss', color='cyan')
     plt.plot(alphas, new_test_losses_bs, label='Test Loss', color='cyan', linestyle='--')
     plt.plot(alphas, new_train_accuracies_bs, label='Train Accuracy', color='orange')
@@ -161,7 +161,7 @@ if __name__=="__main__":
     plt.ylabel('Loss/Accuracy')
     plt.title('Interpolated Weights (Batch Size)')
     plt.legend()
-    plt.add_subplot(1, 2, 2)
+    plt.subplot(1, 2, 2)
     plt.plot(alphas, new_train_losses_lr, label='Train Loss', color='cyan')
     plt.plot(alphas, new_test_losses_lr, label='Test Loss', color='cyan', linestyle='--')
     plt.plot(alphas, new_train_accuracies_lr, label='Train Accuracy', color='orange')
