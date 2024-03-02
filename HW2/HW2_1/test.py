@@ -40,7 +40,7 @@ def predict(model, testing_dir, output_file, id2word):
             sentence = []
             for word_id in output:
                 word = id2word[word_id]
-                if word == '<EOS>' or word == '<PAD>':
+                if word == '<EOS>' or word == '<PAD>' or word == '.':
                     break
                 sentence.append(word)
             sentence = ' '.join(sentence)
