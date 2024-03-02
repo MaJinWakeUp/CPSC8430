@@ -11,4 +11,4 @@
 |  |--hw2_seq2seq.sh                  // bash command
 ```
 
-How to run: `./hw2_seq2seq.sh MLDS_hw2_1_data/testing_data MLDS_hw2_1_data/test.txt`, the prdiction will be saved to the test.txt file, and BLEU score will be printed out.
+How to run: `bash hw2_seq2seq.sh MLDS_hw2_1_data/testing_data MLDS_hw2_1_data/test.txt`, the prdiction will be saved to the test.txt file, and BLEU score will be printed out.

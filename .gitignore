@@ -1,4 +1,4 @@
 HW1/data/
 HW2/HW2_1/MLDS_hw2_1_data/
 **/__pycache__/
-HW2/HW2_1/*.pt
+HW2/HW2_1/final_model.pt
