@@ -8,8 +8,8 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 def main():
-    batch_size = 8
-    num_workers = 4
+    batch_size = 128
+    num_workers = 8
     caption_length = 50
     video_length = 80
     num_vfeatures = 4096
@@ -24,10 +24,16 @@ def main():
     eos_idx = embed.word2id['<EOS>']
     pad_idx = embed.word2id['<PAD>']
     model = Seq2Seq(num_words, frame_dim=num_vfeatures, hidden=256, dropout=0.2, v_step=video_length, c_step=caption_length, bos_idx=bos_idx)
+    try:
+        model.load_state_dict(torch.load('final_model.pt'))
+        print('Model loaded from final_model.pt')
+    except:
+        pass
     model = model.cuda()
     criterion = CrossEntropyLoss()
     optimizer = Adam(model.parameters(), lr=0.001)
-    epochs = 200
+    epochs = 500
+    save_interval = 10
 
     losses_train = []
     for epoch in range(epochs):
@@ -37,8 +43,8 @@ def main():
         for i, (vfeat, caption) in progress_bar:
             vfeat = vfeat.cuda()
             caption = caption.cuda()
-            # num_captions = caption.size(1)
-            num_captions = 1
+            num_captions = caption.size(1)
+            # num_captions = 1
             iter_loss = 0
             for j in range(num_captions):
                 cur_caption = caption[:, j, :].cuda()
@@ -58,8 +64,15 @@ def main():
         print(f'Epoch {epoch} loss: {epoch_loss_train}')
         losses_train.append(epoch_loss_train)
 
-    torch.save(model.state_dict(), f'./final_model.pt')
+        if epoch % save_interval == 0:
+            torch.save(model.state_dict(), f'./final_model.pt')
+            plot_loss(losses_train)
 
+    torch.save(model.state_dict(), f'./final_model.pt')
+    plot_loss(losses_train)
+
+
+def plot_loss(losses_train):
     # Plot loss curve
     fig = plt.figure()
     plt.plot(losses_train, label='Train')

@@ -52,7 +52,7 @@ if __name__ == '__main__':
     google_drive_link = ''
     if not os.path.exists(checkpoint):
         print(f'{checkpoint} not found. Downloading from Google Drive...')
-        os.system(f'gdown {google_drive_link}')
+        os.system(f'wget --no-check-certificate "{google_drive_link}" -O {checkpoint}')
         print('Download complete.')
     model, id2word = build_model(checkpoint)
     predict(model, args.data_dir, args.output, id2word)
