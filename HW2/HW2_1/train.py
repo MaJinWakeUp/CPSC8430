@@ -22,11 +22,12 @@ def main():
     num_words = embed.num_words
     bos_idx = embed.word2id['<BOS>']
     eos_idx = embed.word2id['<EOS>']
+    pad_idx = embed.word2id['<PAD>']
     model = Seq2Seq(num_words, frame_dim=num_vfeatures, hidden=256, dropout=0.2, v_step=video_length, c_step=caption_length, bos_idx=bos_idx)
     model = model.cuda()
     criterion = CrossEntropyLoss()
     optimizer = Adam(model.parameters(), lr=0.001)
-    epochs = 10
+    epochs = 200
 
     losses_train = []
     for epoch in range(epochs):
@@ -36,15 +37,15 @@ def main():
         for i, (vfeat, caption) in progress_bar:
             vfeat = vfeat.cuda()
             caption = caption.cuda()
-            num_captions = caption.size(1)
+            # num_captions = caption.size(1)
+            num_captions = 1
             iter_loss = 0
             for j in range(num_captions):
                 cur_caption = caption[:, j, :].cuda()
-                # print(cur_caption)
                 output, prob = model(vfeat)
+
                 prob = prob.view(-1, prob.shape[-1])
                 target = cur_caption[:, 1:].contiguous().view(-1)
-                # print(prob.shape, target.shape)
                 loss = criterion(prob, target)
                 optimizer.zero_grad()
                 loss.backward()

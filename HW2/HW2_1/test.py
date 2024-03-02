@@ -35,12 +35,12 @@ def predict(model, testing_dir, output_file, id2word):
         for id in test_ids:
             vfeat = torch.from_numpy(np.load(os.path.join(testing_dir, 'feat', f'{id}.npy'))).float()
             vfeat = vfeat.unsqueeze(0).cuda()
-            output = model(vfeat)
+            output, pred = model(vfeat)
             output = output.squeeze(0).cpu().detach().numpy()
             sentence = []
             for word_id in output:
                 word = id2word[word_id]
-                if word == '<EOS>':
+                if word == '<EOS>' or word == '<PAD>':
                     break
                 sentence.append(word)
             sentence = ' '.join(sentence)
