@@ -70,10 +70,9 @@ class SpokenSQuADDataset(Dataset):
             start_pos = len(tokenized_before_answer)
             end_pos = len(tokenized_by_answer)
         
-        mid = (start_pos + end_pos) // 2
-        # Get the start and end position of the window
-        segment_start = max(0, mid - self.window_size // 2)
-        segment_end = min(len(tokenized_context), mid + self.window_size // 2)
+        # Calculate the segment start and segment end
+        segment_start = start_pos // self.stride * self.stride
+        segment_end = segment_start + self.window_size
         # Pad the context if needed
         tokenized_context_segment = tokenized_context[segment_start:segment_end]
         context_segment_mask = [1] * len(tokenized_context_segment)
@@ -96,7 +95,9 @@ class SpokenSQuADDataset(Dataset):
         input_ids = tokenized_question_ + [self.tokenizer.sep_token_id] + tokenized_context_segment_ 
         input_mask = question_mask_ + [1] + context_segment_mask_
         # print(self.tokenizer.decode(input_ids))
-        # print(self.tokenizer.decode(input_ids[start_pos:end_pos]))
+        # print(answer)
+        # print(self.tokenizer.decode(input_ids[start_pos+self.question_length+1:end_pos+self.question_length+1]))
+        # print(start_pos, end_pos)
         return {
             'input_ids': torch.tensor(input_ids),
             'input_mask': torch.tensor(input_mask),
@@ -171,11 +172,5 @@ if __name__ == "__main__":
     data_path = './Spoken-SQuAD/spoken_train-v1.1.json'
     dataset = SpokenSQuADDataset(data_path)
     print(len(dataset))
-    print(dataset[0])
-
-    bert = BertModel.from_pretrained('bert-base-uncased')
-    input_ids = dataset[0]['input_ids'].unsqueeze(0)
-    input_mask = dataset[0]['input_mask'].unsqueeze(0)
-    bert_output = bert(input_ids, attention_mask=input_mask)
-    print(bert_output[0].shape)
-    print(bert_output[1].shape)
+    for i in range(100):
+        sample = dataset[i]

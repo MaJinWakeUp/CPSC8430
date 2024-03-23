@@ -7,24 +7,27 @@ from transformers import AutoTokenizer
 import collections
 
 def postprocess(start_logits, end_logits, input_ids, tokenizer):
-    # start_logits, end_logits: (batch_size, window_size) , produced by a sliding window in the context
     window_size = 64
+    question_length = 32
+    input_ids = input_ids[:, question_length+1:]
+    start_logits = torch.softmax(start_logits, dim=-1)
+    end_logits = torch.softmax(end_logits, dim=-1)
+
     batch_size = start_logits.shape[0]
     best_answer_prob = 0
     best_answer_pos = (0, 0)
     best_answer_batch_idx = 0
-    start_logits = torch.softmax(start_logits, dim=-1)
-    end_logits = torch.softmax(end_logits, dim=-1)
+  
     for i in range(batch_size):
         for j in range(window_size):
             for k in range(j, window_size):
-                prob = start_logits[i][j] * end_logits[i][k]
+                prob = start_logits[i][j] + end_logits[i][k]
                 if prob > best_answer_prob:
                     best_answer_prob = prob
                     best_answer_pos = (j, k)
                     best_answer_batch_idx = i
     answer_start, answer_end = best_answer_pos
-    answer = tokenizer.decode(input_ids[best_answer_batch_idx][answer_start:answer_end+1], skip_special_tokens=True)
+    answer = tokenizer.decode(input_ids[best_answer_batch_idx][answer_start:answer_end], skip_special_tokens=True)
     return answer
 
 def eval_f1(gt_answers, pred_answers):
@@ -55,12 +58,10 @@ def main():
     
     test_data_path = './Spoken-SQuAD/spoken_test-v1.1.json'
     test_dataset = SpokenSQuADDataset(test_data_path, phase='test')
-    num_samples = len(test_dataset)
     gt_answers = []
     pred_answers = []
 
-    progress_bar = tqdm(range(len(test_dataset)))
-    for i in progress_bar:
+    for i in range(len(test_dataset)):
         sample = test_dataset[i]
         input_ids, input_mask, answer, qid = sample['input_ids'], sample['input_mask'], sample['answer'], sample['id']
         # print(input_ids.shape, input_mask.shape)
@@ -70,7 +71,8 @@ def main():
         input_mask = input_mask.to(device)
         start_logits, end_logits = model(input_ids, input_mask)
         final_answer = postprocess(start_logits, end_logits, input_ids, tokenizer)
-        print(f'GT answer: {answer}, Pred answer: {final_answer}')
+        print(f'{i}/{len(test_dataset)} GT answer: {answer}; \t \t Predicted answer: {final_answer}')
+        
         gt_answers.append(answer)
         pred_answers.append(final_answer)
 

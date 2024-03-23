@@ -6,7 +6,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 def main():
-    epochs = 20
+    epochs = 10
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = QANet()
     model.to(device)
@@ -18,10 +18,10 @@ def main():
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=16)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=16)
 
-    model.bert.requires_grad = False
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=5e-5)
+    # model.bert.requires_grad = False
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=1e-5)
     criterion = torch.nn.CrossEntropyLoss()
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5, factor=0.2)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
 
     train_losses = []
     test_losses = []
@@ -62,8 +62,7 @@ def main():
             print(f'Epoch: {epoch}/{epochs}, test_loss: {test_loss}')
             test_losses.append(test_loss)
 
-        if epoch % 10 == 0:
-            torch.save(model.state_dict(), f'qanet_{epoch}.pt')
+        torch.save(model.state_dict(), f'qanet_{epoch}.pt')
 
     # plot the loss curve
     fig = plt.figure()
