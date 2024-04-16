@@ -1,7 +1,7 @@
 ## Directory
 
 ```
-|--HW2_1
+|--HW3
 |  |--Spoken-SQuAD                    // data directory
 |  |--dataset.py                      // create dataset
 |  |--net.py                          // Seq2Seq video caption model
