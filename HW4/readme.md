@@ -13,7 +13,7 @@
 How to run:
 1. For training, please run the following code, and network argument with dcgan, wgan, or acgan.
 ```
-python train.py --network dcgan --epochs 100 --batch-size 64 --lr 1e-4
+python train.py --network dcgan --epochs 100 --batch-size 64 --lr 2e-4
 ```
 3. For testing, please run the following code.
 ```
